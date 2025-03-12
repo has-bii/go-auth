@@ -8,7 +8,6 @@ export default async function middleware(req: NextRequest) {
   // 2. Check if the current route is protected or public
   const path = req.nextUrl.pathname
   const isProtectedRoute = !publicRoutes.includes(path)
-  const isPublicRoute = publicRoutes.includes(path)
 
   // 3. Decrypt the session from the cookie
   const cookie = (await cookies()).get("access_token")?.value
@@ -20,7 +19,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // 5. Redirect to /dashboard if the user is authenticated
-  if (isPublicRoute && session && !req.nextUrl.pathname.startsWith("/")) {
+  if (session && !isProtectedRoute) {
     return NextResponse.redirect(new URL("/", req.nextUrl))
   }
 
